@@ -4,9 +4,9 @@ int main()
 {
 	using namespace std;
 	using namespace MapReduce;
-	KeyValuePair<int, string> firstElement(1950, "penis");
-	KeyValuePair<int, string> secondElement(1950, "not penis");
-	KeyValuePair<int, string> thirdElement(1933, "definitely not penis");
+	KeyValuePair<int, string> firstElement(1950, "Yes");
+	KeyValuePair<int, string> secondElement(1950, "NO");
+	KeyValuePair<int, string> thirdElement(1933, "MAYBE");
 	firstElement.printOut();
 	Map<int, string> myMap;
 	myMap.add(firstElement);
