@@ -20,7 +20,7 @@ int main()
 	}
 	vector<string> another;
 	another = myMap.getVectorWithKey(1950);
-	cout << "1950 elements:" << endl;
+	cout << "1950 elements:" <<  endl;
 	for (auto it : another)
 	{
 		cout << it << endl;
@@ -35,6 +35,8 @@ int main()
 	{
 		result[i].printResult();
 	}
-
+	Reduce<int, string> redo(myMap.getResult());
+	redo.reduceMax();
+	redo.printOut();
 	return 0;
 }

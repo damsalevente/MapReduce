@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <limits>
 using namespace std;
 
 namespace MapReduce
@@ -14,9 +15,11 @@ namespace MapReduce
 	public:
 		KeyValueList() {};
 		KeyValueList(Key key, vector<Value> values):key(key), values(values) {};
-		
+		Key getKey()const;
+		Value getValueAt(int i);
+		vector<Value> getAllValues();
+		Value getMax();
 		void printResult()const;
-		ostream & operator<<(ostream &o);
 	};
 	template<class Key, class Value>
 	class KeyValuePair
@@ -73,10 +76,18 @@ namespace MapReduce
 		void map();
 		KeyValueList<Key,Value> getListWithIndex(int i)const ;
 		KeyValueList<Key, Value>* getEverything()const;
+		vector<KeyValueList<Key, Value>> getResult()const;
 
 	};
+	template <class Key,class Value>
 	class Reduce
 	{
+		vector<KeyValueList<Key, Value>> mapInput;
+		vector<KeyValuePair<Key, Value>> reduceOutput;
+	public:
+		Reduce(vector<KeyValueList<Key, Value>> kvp) :mapInput(kvp) {};
+		void reduceMax();
+		void printOut()const;
 
 	};
 
@@ -156,13 +167,42 @@ namespace MapReduce
 	
 	}
 
+	template<class Key, class Value>
+	inline vector<KeyValueList<Key, Value>> Map<Key, Value>::getResult() const
+	{
+		return result;
+	}
+	template<class Key, class Value>
+	inline Key KeyValueList<Key, Value>::getKey() const
+	{
+		return key;
+	}
 
+	template<class Key, class Value>
+	inline Value KeyValueList<Key, Value>::getValueAt(int i)
+	{
+		return values.at(i);
+	}
 
+	template<class Key, class Value>
+	inline vector<Value> KeyValueList<Key, Value>::getAllValues()
+	{
+		return values;
+	}
 
+	template<class Key, class Value>
+	inline Value KeyValueList<Key, Value>::getMax()
+	{
+		Value max=values.at(0);
+		for (auto it = this->values.cbegin(); it != values.cend(); ++it)
+		{
+			Value a = *it;
+			if( a > max)
+				max = a;
 
-
-
-
+		}
+		return max;
+	}
 
 	template<class Key, class Value>
 	inline void KeyValueList<Key, Value>::printResult() const
@@ -178,6 +218,24 @@ namespace MapReduce
 		}
 		cout << "---------------------------------------" << endl;
 	}
-
-
+	template<class Key, class Value>
+	inline void Reduce<Key, Value>::reduceMax()
+	{
+		for (int i = 0; i < mapInput.size(); i++)
+		{
+			KeyValueList<Key, Value> currentKey(mapInput.at(i));
+			
+			KeyValuePair<Key, Value> currentResult(currentKey.getKey(), currentKey.getMax());
+			reduceOutput.push_back(currentResult);
+		}
+	}
+	template<class Key, class Value>
+	inline void Reduce<Key, Value>::printOut() const
+	{
+		for (int i = 0; i < reduceOutput.size(); i++)
+		{
+			KeyValuePair<Key,Value> current(reduceOutput.at(i));
+			current.printOut();
+		}
+	}
 }
